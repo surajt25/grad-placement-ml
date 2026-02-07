@@ -3,3 +3,10 @@
 venv/
 env/
 
+# Data files
+data/raw/
+data/processed/
+
+# Python
+__pycache__/
+*.pyc
