@@ -1,8 +1,11 @@
 import pandas as pd
 from pathlib import Path
+
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 TRAIN_OUT = BASE_DIR / "data" / "processed" / "placement_clean_train.csv"
@@ -28,24 +31,25 @@ def train_and_evaluate():
         random_state=42
     )
 
-    model = LogisticRegression(
-        max_iter=1000,
-        class_weight="balanced",
-        random_state=42
-    )
 
-    print(
-    X.isna()
-     .sum()
-     .sort_values(ascending=False)
-     .head(10)
+    # Pipeline with scaling and logistic regression
+    model = Pipeline(
+        steps=[
+            ("scaler", StandardScaler()),
+            ("classifier", LogisticRegression(
+                max_iter= 1000,
+                class_weight= "balanced",
+                random_state= 42
+            ))
+        ]
     )
+    
 
 
     model.fit(X_train, y_train)
     preds = model.predict(X_val)
 
-    print("\n =============== Validation Results =============== ")
+    print("\n validation results ( scaled logistic regression)")
     print(classification_report(y_val, preds))
 
     return model
